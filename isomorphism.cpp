@@ -114,28 +114,6 @@ void radixSort(vector<pair<int, vector<int> > *> &a) {
     }
 }
 
-// A >= B
-bool compare(pair<int, vector<int> > *a, pair<int, vector<int> > *b) {
-    vector<int> A = a->second;
-    vector<int> B = b->second;
-    if (A.size() > B.size()) {
-        return true;
-    }
-    if (A.size() < B.size()) {
-        return false;
-    }
-    for (int i = 0; i < A.size(); ++i) {
-        if (A[i] > B[i]) {
-            return true;
-        }
-        if (A[i] < B[i]) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 bool equals(vi a, vi b) {
     if (a.size() != b.size()) {
         return false;
@@ -261,10 +239,8 @@ bool rootedTreeIsomorphism(int r1, int r2) {
             tuples2[j]->second.push_back(label2[v]);
         }
 
-        //radixSort(tuples1);
-        //radixSort(tuples2);
-        sort(tuples1.begin(), tuples1.end(), compare);
-        sort(tuples2.begin(), tuples2.end(), compare);
+        radixSort(tuples1);
+        radixSort(tuples2);
 
         for (int i = 0, j = 0; i < L1[hi].size(); i++) {
             if (i > 0 && !equals(tuples1[i]->second, tuples1[i - 1]->second)) {
