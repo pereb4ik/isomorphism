@@ -17,8 +17,6 @@ vector<int> *parent;
 int n;
 // m - alphabet size
 
-vector<queue<pair<int, int> * >> QQQ;
-
 void Sort2(vector<pair<int, int> *> &a) {
     queue<pair<int, int> *> QUEUE;
     int M = 1;
@@ -27,20 +25,21 @@ void Sort2(vector<pair<int, int> *> &a) {
         M = max(M, a[i]->first);
         M = max(M, a[i]->second);
     }
+    vector<queue<pair<int, int> * >> Q(M + 1);
     for (int j = 2; j > 0; --j) {
         while (!QUEUE.empty()) {
             pair<int, int> *A = QUEUE.front();
             QUEUE.pop();
             if (j == 1) {
-                QQQ[A->first].push(A);
+                Q[A->first].push(A);
             } else {
-                QQQ[A->second].push(A);
+                Q[A->second].push(A);
             }
         }
         for (int l = 0; l <= M; ++l) {
-            while (!QQQ[l].empty()) {
-                QUEUE.push(QQQ[l].front());
-                QQQ[l].pop();
+            while (!Q[l].empty()) {
+                QUEUE.push(Q[l].front());
+                Q[l].pop();
             }
         }
     }
@@ -288,8 +287,6 @@ bool treeIsomorphism() {
 
 int main() {
     scanf("%d", &n);
-
-    QQQ.resize(n + 2);
 
     t1.resize(n, vector<int>());
     t2.resize(n, vector<int>());
