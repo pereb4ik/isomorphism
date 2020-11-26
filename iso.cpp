@@ -56,12 +56,6 @@ vi findCenter(int offset = 0) {
         }
         a = na;
     }
-    cout << "v:";
-    cout << a[0];
-    cout << "v:";
-    cout << a[1];
-    cout << "\n";
-    cout.flush();
     return a;
 }
 
@@ -132,14 +126,14 @@ bool treeIsomorphism() {
 }
 
 int main() {
-    cin >> n;
+    scanf("%d", &n);
     vvi t1(n);
     vvi t2(n);
 
     for (int i = 0; i < n - 1; ++i) {
         int v, u;
-        cin >> v;
-        cin >> u;
+        scanf("%d", &v);
+        scanf("%d", &u);
         v--;
         u--;
         t1[v].push_back(u);
@@ -148,8 +142,8 @@ int main() {
 
     for (int i = 0; i < n - 1; ++i) {
         int v, u;
-        cin >> v;
-        cin >> u;
+        scanf("%d", &v);
+        scanf("%d", &u);
         v--;
         u--;
         t2[v].push_back(u);
@@ -170,8 +164,4 @@ int main() {
 
     bool res = treeIsomorphism();
     cout << res << endl;
-
-    if (res)
-        for (int i = 0; i < n; i++)
-            cout << map[i] << endl;
 }

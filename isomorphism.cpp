@@ -69,24 +69,25 @@ void radixSort(vector<pair<int, vector<int> > *> &a) {
     }
     m++;
     Sort2(A);
-    vvi NONEMPTY(lmax + 1);
-    vector<vector<pair<int, vector<int>> * >> LENGTH(lmax + 1);
+    vector<queue<int>> NONEMPTY(lmax + 1);
+    vector<queue<pair<int, vector<int>> * >> LENGTH(lmax + 1);
     for (int i = 0; i < A.size(); ++i) {
         int l = A[i]->first;
         if (NONEMPTY[l].size() == 0 || NONEMPTY[l].back() != A[i]->second) {
             int j = A[i]->second;
-            NONEMPTY[l].push_back(j);
+            NONEMPTY[l].push(j);
         }
     }
     for (int i = 0; i < a.size(); ++i) {
         int l = a[i]->second.size();
-        LENGTH[l].push_back(a[i]);
+        LENGTH[l].push(a[i]);
     }
     queue<pair<int, vector<int>> *> QUEUE;
     vector<queue<pair<int, vector<int>> * >> Q(m + 1);
     for (int l = lmax; l > 0; --l) {
-        for (int i = 0; i < LENGTH[l].size(); ++i) {
-            pair<int, vector<int>> *A0 = LENGTH[l][i];
+        while (!LENGTH[l].empty()) {
+            pair<int, vector<int>> *A0 = LENGTH[l].front();
+            LENGTH[l].pop();
             int aij = (*A0).second[l - 1];
             Q[aij].push(A0);
         }
@@ -96,8 +97,9 @@ void radixSort(vector<pair<int, vector<int> > *> &a) {
             int aij = (*A0).second[l - 1];
             Q[aij].push(A0);
         }
-        for (int i = 0; i < NONEMPTY[l].size(); ++i) {
-            int j = NONEMPTY[l][i];
+        while (!NONEMPTY[l].empty()) {
+            int j = NONEMPTY[l].front();
+            NONEMPTY[l].pop();
             queue<pair<int, vector<int>> *> Qj = Q[j];
             while (!Qj.empty()) {
                 QUEUE.push(Qj.front());
@@ -105,8 +107,9 @@ void radixSort(vector<pair<int, vector<int> > *> &a) {
             }
         }
     }
-    for (int i = LENGTH[0].size() - 1; i > -1; --i) {
-        QUEUE.push(LENGTH[0][i]);
+    while (!LENGTH[0].empty()) {
+        QUEUE.push(LENGTH[0].front());
+        LENGTH[0].pop();
     }
     for (int i = 0; i < a.size(); ++i) {
         a[i] = QUEUE.front();
@@ -284,17 +287,17 @@ bool treeIsomorphism() {
 }
 
 int main() {
-    cin >> n;
+    scanf("%d", &n);
 
     QQQ.resize(n + 2);
 
-    t1.assign(n, vector<int>());
-    t2.assign(n, vector<int>());
+    t1.resize(n, vector<int>());
+    t2.resize(n, vector<int>());
 
     for (int i = 0; i < n - 1; ++i) {
         int v, u;
-        cin >> v;
-        cin >> u;
+        scanf("%d", &v);
+        scanf("%d", &u);
         v--;
         u--;
         t1[v].push_back(u);
@@ -303,14 +306,14 @@ int main() {
 
     for (int i = 0; i < n - 1; ++i) {
         int v, u;
-        cin >> v;
-        cin >> u;
+        scanf("%d", &v);
+        scanf("%d", &u);
         v--;
         u--;
         t2[v].push_back(u);
         t2[u].push_back(v);
     }
     bool res = treeIsomorphism();
-    cout << res << endl;
+    printf("%d", res);
     return 0;
 }
