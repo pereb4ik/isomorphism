@@ -2,10 +2,8 @@
 #include <algorithm>
 #include <vector>
 #include <queue>
-#include <deque>
 
 using namespace std;
-
 
 typedef vector<vector<int>> *vvil;
 typedef vector<vector<int>> vvi;
@@ -19,12 +17,7 @@ vector<int> *parent;
 int n;
 // m - alphabet size
 
-void print(pair<int, int> *p) {
-    cout << p->first;
-    cout << " ";
-    cout << p->second;
-    cout << "\n";
-}
+vector<queue<pair<int, int> * >> QQQ;
 
 void Sort2(vector<pair<int, int> *> &a) {
     queue<pair<int, int> *> QUEUE;
@@ -34,25 +27,21 @@ void Sort2(vector<pair<int, int> *> &a) {
         M = max(M, a[i]->first);
         M = max(M, a[i]->second);
     }
-    vector<vector<pair<int, int> * >> Q(M + 1);
     for (int j = 2; j > 0; --j) {
-        for (int l = 0; l < M; ++l) {
-            Q[l].clear();
-        }
         while (!QUEUE.empty()) {
             pair<int, int> *A = QUEUE.front();
             QUEUE.pop();
             if (j == 1) {
-                Q[A->first].push_back(A);
+                QQQ[A->first].push(A);
             } else {
-                Q[A->second].push_back(A);
+                QQQ[A->second].push(A);
             }
         }
         for (int l = 0; l <= M; ++l) {
-            for (int i = 0; i < Q[l].size(); ++i) {
-                QUEUE.push(Q[l][i]);
+            while (!QQQ[l].empty()) {
+                QUEUE.push(QQQ[l].front());
+                QQQ[l].pop();
             }
-            Q[l].clear();
         }
     }
     for (int i = 0; i < a.size(); ++i) {
@@ -62,45 +51,30 @@ void Sort2(vector<pair<int, int> *> &a) {
 }
 
 void radixSort(vector<pair<int, vector<int> > *> &a) {
-    /*cout << "\n";
-    for (int i = 0; i < a.size(); ++i) {
-        vector<int> ai = a[i]->second;
-        for (int j = 0; j < ai.size(); ++j) {
-            cout << ai[j];
-            cout << " ";
-        }
-        cout << "\n";
-    }
-    cout << "size: ";
-    cout << a.size();
-    cout.flush();*/
-    vector<pair<int, int> *> *A;
-    vector<pair<int, int> *> B;
     vector<pair<int, int>> C;
-    A = &B;
+    C.reserve(a.size());
     int lmax = 0;
     int m = 1;
     for (int i = 0; i < a.size(); ++i) {
-        vector<int> ai = a[i]->second;
-        lmax = max(lmax, (int) ai.size());
-        for (int l = 0; l < ai.size(); ++l) {
-            C.push_back(make_pair(l + 1, ai[l]));
-            m = max(m, ai[l]);
+        vector<int> *ai = &(a[i]->second);
+        lmax = max(lmax, (int) ai->size());
+        for (int l = 0; l < ai->size(); ++l) {
+            C.push_back(make_pair(l + 1, (*ai)[l]));
+            m = max(m, (*ai)[l]);
         }
     }
-    /*cout << "kek";
-    cout.flush();*/
+    vector<pair<int, int> *> A(C.size());
     for (int i = 0; i < C.size(); ++i) {
-        (*A).push_back(&C[i]);
+        A[i] = &C[i];
     }
     m++;
-    Sort2(*A);
-    vector<vector<int>> NONEMPTY(lmax + 1);
+    Sort2(A);
+    vvi NONEMPTY(lmax + 1);
     vector<vector<pair<int, vector<int>> * >> LENGTH(lmax + 1);
-    for (int i = 0; i < (*A).size(); ++i) {
-        int l = (*A)[i]->first;
-        if (NONEMPTY[l].size() == 0 || NONEMPTY[l][NONEMPTY[l].size() - 1] != (*A)[i]->second) {
-            int j = (*A)[i]->second;
+    for (int i = 0; i < A.size(); ++i) {
+        int l = A[i]->first;
+        if (NONEMPTY[l].size() == 0 || NONEMPTY[l].back() != A[i]->second) {
+            int j = A[i]->second;
             NONEMPTY[l].push_back(j);
         }
     }
@@ -108,57 +82,36 @@ void radixSort(vector<pair<int, vector<int> > *> &a) {
         int l = a[i]->second.size();
         LENGTH[l].push_back(a[i]);
     }
-    // sort
-    deque<pair<int, vector<int>> *> QUEUE;
-    vector<vector<pair<int, vector<int>> * >> Q(m + 1);
+    queue<pair<int, vector<int>> *> QUEUE;
+    vector<queue<pair<int, vector<int>> * >> Q(m + 1);
     for (int l = lmax; l > 0; --l) {
         for (int i = 0; i < LENGTH[l].size(); ++i) {
-            pair<int, vector<int>> *A = LENGTH[l][i];
-            int aij = (*A).second[l - 1];
-            Q[aij].push_back(A);
+            pair<int, vector<int>> *A0 = LENGTH[l][i];
+            int aij = (*A0).second[l - 1];
+            Q[aij].push(A0);
         }
         while (!QUEUE.empty()) {
-            pair<int, vector<int>> *A = QUEUE.front();
-            QUEUE.pop_front();
-            int aij = (*A).second[l - 1];
-            Q[aij].push_back(A);
+            pair<int, vector<int>> *A0 = QUEUE.front();
+            QUEUE.pop();
+            int aij = (*A0).second[l - 1];
+            Q[aij].push(A0);
         }
         for (int i = 0; i < NONEMPTY[l].size(); ++i) {
             int j = NONEMPTY[l][i];
-            for (int k = 0; k < Q[j].size(); ++k) {
-                QUEUE.push_back(Q[j][k]);
+            queue<pair<int, vector<int>> *> Qj = Q[j];
+            while (!Qj.empty()) {
+                QUEUE.push(Qj.front());
+                Qj.pop();
             }
-            Q[j].clear();
         }
     }
     for (int i = LENGTH[0].size() - 1; i > -1; --i) {
-        QUEUE.push_front(LENGTH[0][i]);
+        QUEUE.push(LENGTH[0][i]);
     }
     for (int i = 0; i < a.size(); ++i) {
         a[i] = QUEUE.front();
-        QUEUE.pop_front();
+        QUEUE.pop();
     }
-}
-
-// a >= b
-bool compare(pair<int, vi> a, pair<int, vi> b) {
-    vi A = a.second;
-    vi B = b.second;
-    if (A.size() > B.size()) {
-        return true;
-    }
-    if (B.size() > A.size()) {
-        return false;
-    }
-    for (int i = 0; i < A.size(); ++i) {
-        if (A[i] > B[i]) {
-            return true;
-        }
-        if (B[i] > A[i]) {
-            return false;
-        }
-    }
-    return true;
 }
 
 bool equals(vi a, vi b) {
@@ -217,10 +170,8 @@ bool rootedTreeIsomorphism(int r1, int r2) {
     vvi L1(n);
     vvi L2(n);
 
-    vi p1(n);
-    vi p2(n);
-    p1.assign(n, -1);
-    p2.assign(n, -1);
+    vi p1(n, -1);
+    vi p2(n, -1);
 
     vvi c1(n);
     vvi c2(n);
@@ -240,38 +191,16 @@ bool rootedTreeIsomorphism(int r1, int r2) {
     if (h1 != h2) {
         return false;
     }
-    /*cout << "\n";
-    for (int i = 0; i < n; ++i) {
-        cout << p1[i];
-        cout << " ";
-    }
-    cout << "<-parents1\n";
 
-
-    cout << "\n";
-    for (int i = 0; i < n; ++i) {
-        cout << p2[i];
-        cout << " ";
-    }
-    cout << "<-parents2\n";
-*/
     int h = h1;
     vi label1(n);
     vi label2(n);
 
     for (int v : L1[h - 1]) {
         label1[v] = 0;
-        /*cout << "v: ";
-        cout << v;
-        cout << " ";
-        cout << "0\n";*/
     }
     for (int v : L2[h - 1]) {
         label2[v] = 0;
-        /*cout << "v: ";
-        cout << v;
-        cout << " ";
-        cout << "0\n";*/
     }
     if (L1[h - 1].size() != L2[h - 1].size()) {
         return false;
@@ -320,22 +249,12 @@ bool rootedTreeIsomorphism(int r1, int r2) {
                 j++;
             }
             label1[tuples1[i]->first] = j;
-            /*cout << "v1: ";
-            cout << tuples1[i]->first;
-            cout << " ";
-            cout << j;
-            cout << "\n";*/
         }
         for (int i = 0, j = 0; i < L2[hi].size(); i++) {
             if (i > 0 && !equals(tuples2[i]->second, tuples2[i - 1]->second)) {
                 j++;
             }
             label2[tuples2[i]->first] = j;
-            /*cout << "v2: ";
-            cout << tuples2[i]->first;
-            cout << " ";
-            cout << j;
-            cout << "\n";*/
         }
         for (int i = 0; i < L1[hi].size(); ++i) {
             int v = tuples1[i]->first;
@@ -368,6 +287,8 @@ bool treeIsomorphism() {
 
 int main() {
     cin >> n;
+
+    QQQ.resize(n + 2);
 
     t1.assign(n, vector<int>());
     t2.assign(n, vector<int>());
