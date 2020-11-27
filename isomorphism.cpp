@@ -1,4 +1,3 @@
-#include <iostream>
 #include <algorithm>
 #include <vector>
 #include <queue>
@@ -15,8 +14,8 @@ vvi t1, t2;
 vector<int> *parent;
 
 int n;
-// m - alphabet size
 
+// Lexicographic sort of 2-tuples
 void Sort2(vector<pair<int, int> *> &a) {
     queue<pair<int, int> *> QUEUE;
     int M = 1;
@@ -49,30 +48,30 @@ void Sort2(vector<pair<int, int> *> &a) {
     }
 }
 
+// Lexicographic sort of variety tuples
 void radixSort(vector<pair<int, vector<int> > *> &a) {
-    vector<pair<int, int>> C;
-    C.reserve(a.size());
+    vector<pair<int, int>> B;
+    B.reserve(a.size());
     int lmax = 0;
     int m = 1;
     for (int i = 0; i < a.size(); ++i) {
         vector<int> *ai = &(a[i]->second);
         lmax = max(lmax, (int) ai->size());
         for (int l = 0; l < ai->size(); ++l) {
-            C.push_back(make_pair(l + 1, (*ai)[l]));
+            B.push_back(make_pair(l + 1, (*ai)[l]));
             m = max(m, (*ai)[l]);
         }
     }
-    vector<pair<int, int> *> A(C.size());
-    for (int i = 0; i < C.size(); ++i) {
-        A[i] = &C[i];
+    vector<pair<int, int> *> A(B.size());
+    for (int i = 0; i < B.size(); ++i) {
+        A[i] = &B[i];
     }
-    m++;
     Sort2(A);
     vector<queue<int>> NONEMPTY(lmax + 1);
     vector<queue<pair<int, vector<int>> * >> LENGTH(lmax + 1);
     for (int i = 0; i < A.size(); ++i) {
         int l = A[i]->first;
-        if (NONEMPTY[l].size() == 0 || NONEMPTY[l].back() != A[i]->second) {
+        if (NONEMPTY[l].empty() || NONEMPTY[l].back() != A[i]->second) {
             int j = A[i]->second;
             NONEMPTY[l].push(j);
         }
@@ -99,10 +98,9 @@ void radixSort(vector<pair<int, vector<int> > *> &a) {
         while (!NONEMPTY[l].empty()) {
             int j = NONEMPTY[l].front();
             NONEMPTY[l].pop();
-            queue<pair<int, vector<int>> *> Qj = Q[j];
-            while (!Qj.empty()) {
-                QUEUE.push(Qj.front());
-                Qj.pop();
+            while (!Q[j].empty()) {
+                QUEUE.push(Q[j].front());
+                Q[j].pop();
             }
         }
     }
@@ -167,6 +165,7 @@ int dfs(int v, int depth) {
     return h + 1;
 }
 
+// Realization of Aho, Hopcroft and Ullman algorithm
 bool rootedTreeIsomorphism(int r1, int r2) {
     //list of vert on levels
     vvi L1(n);
@@ -216,12 +215,12 @@ bool rootedTreeIsomorphism(int r1, int r2) {
 
         vector<pair<int, vector<int> > *> tuples1(L1[hi].size());
         vector<pair<int, vector<int> > *> tuples2(L2[hi].size());
-        vector<pair<int, vector<int> >> tt1(L1[hi].size());
-        vector<pair<int, vector<int> >> tt2(L2[hi].size());
+        vector<pair<int, vector<int> >> ts1(L1[hi].size());
+        vector<pair<int, vector<int> >> ts2(L2[hi].size());
 
         for (int i = 0; i < L1[hi].size(); ++i) {
-            tuples1[i] = &tt1[i];
-            tuples2[i] = &tt2[i];
+            tuples1[i] = &ts1[i];
+            tuples2[i] = &ts2[i];
         }
 
         for (int i = 0; i < L1[hi].size(); ++i) {
@@ -311,6 +310,6 @@ int main() {
         t2[u].push_back(v);
     }
     bool res = treeIsomorphism();
-    printf("%d", res);
+    printf("%d\n", res);
     return 0;
 }
