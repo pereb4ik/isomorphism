@@ -4,6 +4,10 @@
 
 using namespace std;
 
+#define MAP
+
+vector<int> MaP;
+
 typedef vector<vector<int>> *vvil;
 typedef vector<vector<int>> vvi;
 typedef vector<int> vi;
@@ -197,14 +201,14 @@ bool rootedTreeIsomorphism(int r1, int r2) {
     vi label1(n);
     vi label2(n);
 
+    if (L1[h - 1].size() != L2[h - 1].size()) {
+        return false;
+    }
     for (int v : L1[h - 1]) {
         label1[v] = 0;
     }
     for (int v : L2[h - 1]) {
         label2[v] = 0;
-    }
-    if (L1[h - 1].size() != L2[h - 1].size()) {
-        return false;
     }
     vi m1(n);
     vi m2(n);
@@ -243,6 +247,12 @@ bool rootedTreeIsomorphism(int r1, int r2) {
         radixSort(tuples1);
         radixSort(tuples2);
 
+        for (int i = 0; i < L1[hi].size(); ++i) {
+            if (!equals(tuples1[i]->second, tuples2[i]->second)) {
+                return false;
+            }
+        }
+
         for (int i = 0, j = 0; i < L1[hi].size(); i++) {
             if (i > 0 && !equals(tuples1[i]->second, tuples1[i - 1]->second)) {
                 j++;
@@ -261,7 +271,23 @@ bool rootedTreeIsomorphism(int r1, int r2) {
             if (label1[v] != label2[u]) {
                 return false;
             }
+#ifdef MAP
+            MaP[v] = u;
+#endif
         }
+#ifdef MAP
+        if (hi == h - 2) {
+            for (int i = 0; i < L1[hi].size(); ++i) {
+                int v = tuples1[i]->first;
+                int u = tuples2[i]->first;
+                for (int j = 0; j < c1[v].size(); ++j) {
+                    int cv = c1[v][j];
+                    int cu = c2[u][j];
+                    MaP[cv] = cu;
+                }
+            }
+        }
+#endif
     }
 
     return true;
@@ -289,6 +315,7 @@ int main() {
 
     t1.resize(n, vector<int>());
     t2.resize(n, vector<int>());
+    MaP.resize(n, 0);
 
     for (int i = 0; i < n - 1; ++i) {
         int v, u;
@@ -311,5 +338,13 @@ int main() {
     }
     bool res = treeIsomorphism();
     printf("%d\n", res);
+#ifdef MAP
+    if (res) {
+        printf("\n");
+        for (int i = 0; i < n; ++i) {
+            printf("%d\n", MaP[i]);
+        }
+    }
+#endif
     return 0;
 }
