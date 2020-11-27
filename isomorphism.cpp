@@ -4,15 +4,11 @@
 
 using namespace std;
 
-#define MAP
-
-vector<int> MaP;
-
 typedef vector<vector<int>> *vvil;
 typedef vector<vector<int>> vvi;
 typedef vector<int> vi;
 
-vvil children, tree, L;
+vvil tree, L;
 
 vvi t1, t2;
 vector<int> *parent;
@@ -162,7 +158,6 @@ int dfs(int v, int depth) {
     for (int u : (*tree)[v]) {
         if (u != (*parent)[v]) {
             (*parent)[u] = v;
-            (*children)[v].push_back(u);
             h = max(h, dfs(u, depth + 1));
         }
     }
@@ -184,13 +179,11 @@ bool rootedTreeIsomorphism(int r1, int r2) {
     tree = &t1;
     L = &L1;
     parent = &p1;
-    children = &c1;
     int h1 = dfs(r1, 0);
 
     tree = &t2;
     L = &L2;
     parent = &p2;
-    children = &c2;
     int h2 = dfs(r2, 0);
 
     if (h1 != h2) {
@@ -271,23 +264,7 @@ bool rootedTreeIsomorphism(int r1, int r2) {
             if (label1[v] != label2[u]) {
                 return false;
             }
-#ifdef MAP
-            MaP[v] = u;
-#endif
         }
-#ifdef MAP
-        if (hi == h - 2) {
-            for (int i = 0; i < L1[hi].size(); ++i) {
-                int v = tuples1[i]->first;
-                int u = tuples2[i]->first;
-                for (int j = 0; j < c1[v].size(); ++j) {
-                    int cv = c1[v][j];
-                    int cu = c2[u][j];
-                    MaP[cv] = cu;
-                }
-            }
-        }
-#endif
     }
 
     return true;
@@ -315,7 +292,6 @@ int main() {
 
     t1.resize(n, vector<int>());
     t2.resize(n, vector<int>());
-    MaP.resize(n, 0);
 
     for (int i = 0; i < n - 1; ++i) {
         int v, u;
@@ -338,13 +314,5 @@ int main() {
     }
     bool res = treeIsomorphism();
     printf("%d\n", res);
-#ifdef MAP
-    if (res) {
-        printf("\n");
-        for (int i = 0; i < n; ++i) {
-            printf("%d\n", MaP[i]);
-        }
-    }
-#endif
     return 0;
 }
