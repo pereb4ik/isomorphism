@@ -193,7 +193,6 @@ bool rootedTreeIsomorphism(int r1, int r2) {
     int h = h1;
     vi label1(n);
     vi label2(n);
-
     if (L1[h - 1].size() != L2[h - 1].size()) {
         return false;
     }
@@ -210,17 +209,18 @@ bool rootedTreeIsomorphism(int r1, int r2) {
             return false;
         }
 
-        vector<pair<int, vector<int> > *> tuples1(L1[hi].size());
-        vector<pair<int, vector<int> > *> tuples2(L2[hi].size());
-        vector<pair<int, vector<int> >> ts1(L1[hi].size());
-        vector<pair<int, vector<int> >> ts2(L2[hi].size());
+        int lsize = L1[hi].size();
+        vector<pair<int, vector<int> > *> tuples1(lsize);
+        vector<pair<int, vector<int> > *> tuples2(lsize);
+        vector<pair<int, vector<int> >> ts1(lsize);
+        vector<pair<int, vector<int> >> ts2(lsize);
 
-        for (int i = 0; i < L1[hi].size(); ++i) {
+        for (int i = 0; i < lsize; ++i) {
             tuples1[i] = &ts1[i];
             tuples2[i] = &ts2[i];
         }
 
-        for (int i = 0; i < L1[hi].size(); ++i) {
+        for (int i = 0; i < lsize; ++i) {
             tuples1[i]->first = L1[hi][i];
             m1[tuples1[i]->first] = i;
             tuples2[i]->first = L2[hi][i];
@@ -240,27 +240,29 @@ bool rootedTreeIsomorphism(int r1, int r2) {
         radixSort(tuples1);
         radixSort(tuples2);
 
-        for (int i = 0; i < L1[hi].size(); ++i) {
+        for (int i = 0; i < lsize; ++i) {
             if (!equals(tuples1[i]->second, tuples2[i]->second)) {
                 return false;
             }
         }
 
-        for (int i = 0, j = 0; i < L1[hi].size(); i++) {
+        for (int i = 0, j = 0; i < lsize; i++) {
             if (i > 0 && !equals(tuples1[i]->second, tuples1[i - 1]->second)) {
                 j++;
             }
             label1[tuples1[i]->first] = j;
         }
-        for (int i = 0, j = 0; i < L2[hi].size(); i++) {
+        for (int i = 0, j = 0; i < lsize; i++) {
             if (i > 0 && !equals(tuples2[i]->second, tuples2[i - 1]->second)) {
                 j++;
             }
             label2[tuples2[i]->first] = j;
         }
-        for (int i = 0; i < L1[hi].size(); ++i) {
+        for (int i = 0; i < lsize; ++i) {
             int v = tuples1[i]->first;
             int u = tuples2[i]->first;
+            L1[hi][i] = v;
+            L2[hi][i] = u;
             if (label1[v] != label2[u]) {
                 return false;
             }
