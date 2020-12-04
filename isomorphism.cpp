@@ -12,6 +12,8 @@ vvil tree, L;
 
 vvi t1, t2;
 vector<int> *parent;
+vvi L1, L2;
+vi p1, p2;
 
 int n;
 
@@ -58,7 +60,7 @@ void radixSort(vector<pair<int, vector<int> > *> &a) {
         vector<int> *ai = &(a[i]->second);
         lmax = max(lmax, (int) ai->size());
         for (int l = 0; l < ai->size(); ++l) {
-            B.push_back(make_pair(l + 1, (*ai)[l]));
+            B.emplace_back(l + 1, (*ai)[l]);
             m = max(m, (*ai)[l]);
         }
     }
@@ -167,14 +169,11 @@ int dfs(int v, int depth) {
 // Realization of Aho, Hopcroft and Ullman algorithm
 bool rootedTreeIsomorphism(int r1, int r2) {
     //list of vert on levels
-    vvi L1(n);
-    vvi L2(n);
+    L1.assign(n, vector<int>());
+    L2.assign(n, vector<int>());
 
-    vi p1(n, -1);
-    vi p2(n, -1);
-
-    vvi c1(n);
-    vvi c2(n);
+    p1.assign(n, -1);
+    p2.assign(n, -1);
 
     tree = &t1;
     L = &L1;
