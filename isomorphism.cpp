@@ -18,7 +18,7 @@ vi p1, p2;
 int n;
 
 // Lexicographic sort of 2-tuples
-void Sort2(vector<pair<int, int> *> &a) {
+void sort2(vector<pair<int, int> *> &a) {
     queue<pair<int, int> *> QUEUE;
     int M = 1;
     for (int i = 0; i < a.size(); ++i) {
@@ -68,7 +68,7 @@ void radixSort(vector<pair<int, vector<int> > *> &a) {
     for (int i = 0; i < B.size(); ++i) {
         A[i] = &B[i];
     }
-    Sort2(A);
+    sort2(A);
     vector<queue<int>> NONEMPTY(lmax + 1);
     vector<queue<pair<int, vector<int>> * >> LENGTH(lmax + 1);
     for (int i = 0; i < A.size(); ++i) {
